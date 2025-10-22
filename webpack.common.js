@@ -12,7 +12,8 @@
    },
    plugins: [
      new HtmlWebpackPlugin({
-       title: 'Production',
+       title: 'Todo App',
+       template: './src/template.html',
      }),
    ],
    module: {

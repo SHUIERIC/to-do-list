@@ -1,10 +1,12 @@
-import { Item } from "./todo-item";
-
 class Project {
+    static allProject =[];
+
     constructor (name) {
         this.name = name;
         this.project = [];
+        Project.allProject.push(this)
     }
+
 
     addItem (item) {
         this.project.push(item)
