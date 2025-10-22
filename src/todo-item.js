@@ -24,47 +24,71 @@ class Item {
         this.description = description;
         this.dueDate = dueDate;
         this.priority = priority
+        this.done = false
         this.notes = new Note()
         this.checklist = new Checklist ()
     }
+    
+    changePriority (newPriority) {
+        this.priority= newPriority
+    }
 
+    changeDone () {
+        this.done = !this.done
+    }
+
+    edit(updatedData) {
+        if (updatedData.title !== undefined) this.title = updatedData.title;
+        if (updatedData.description !== undefined) this.description = updatedData.description;
+        if (updatedData.priority !== undefined) this.priority = updatedData.priority;
+        if (updatedData.done !== undefined) this.done = updatedData.done;
+
+        if (updatedData.dueDate) {
+            const parsedDate =parse(updatedData.dueDate, 'yyyy-MM-dd', new Date())
+            this.dueDate = format(parsedDate, 'yyyy-MM-dd')
+        }
+    }
+
+    delete(project) {
+        project.removeItem(this)
+    }
+        
 }
 
 class Note {
     constructor (note) {
-        this.note = note;
-        this.notes = [] 
+        this.list = [] 
     }
 
     addNote (note) {
-        this.notes.push(note)
+        this.list.push(note)
     }
 
     removeNote (index) {
-        this.notes.splice(index, 1)
+        this.list.splice(index, 1)
     }
 
     getNote () {
-        return this.notes
+        return this.list
     }
 }
 
 class Checklist {
     constructor () {
-        this.checklist = []
+        this.checklists = []
     }
 
     addTask (task) {
-        this.checklist.push({task: task, done: false})
+        this.checklists.push({task: task, done: false})
     }
 
     removeTask (index) {
-        this.checklist.splice(index, 1)
+        this.checklists.splice(index, 1)
     }
 
     doneTask (index) {
-        if (this.checklist[index]) {
-            this.checklist[index].done ? flase : true;
+        if (this.checklists[index]) {
+            this.checklists[index].done = !this.checklists[index].done;
         }
     }
 

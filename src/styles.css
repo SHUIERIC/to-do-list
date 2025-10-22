@@ -1,0 +1,23 @@
+body {
+    height: 98vh;
+    display: grid;
+    grid-template-columns: minmax(100px, 1fr) minmax(500px, 5fr);
+}
+
+.mainpage {
+    background-color: grey;
+}
+
+.sidebar {
+    background-color: bisque;
+}
+
+.main {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 2rem;
+}
+
+.todo-card {
+    border: 2px solid red;
+}

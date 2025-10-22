@@ -9,9 +9,63 @@
 
 <body>
   <div class="sidebar">
+    <div class="projectList">My Projects</div>
+     <div class="sideContent"></div>
+ 
+  </div>
   </div>
 
+  <div class="mainpage">
+    <div class="projectTitle">
+    </div>
   <div class="main"></div>
-  
+  <div class="itemContainer"></div>
+
+  <dialog id="edit-dialog">
+  <form method="dialog">
+    <h3>Edit Item</h3>
+    
+    <label>
+      Title:
+      <input type="text" name="title">
+    </label>
+    <br>
+
+    <label>
+      Description:
+      <textarea name="description"></textarea>
+    </label>
+    <br>
+
+     <label>
+      Due Date:
+      <input type="date" name="dueDate">
+    </label>
+
+    <label>
+      Priority:
+      <select name="priority">
+        <option value="Low">Low</option>
+        <option value="Medium">Medium</option>
+        <option value="High">High</option>
+      </select>
+    </label>
+    <br>
+
+    <label>
+      Done:
+      <input type="checkbox" name="done">
+    </label>
+    <br>
+
+    <menu>
+      <button id="cancel-btn" value="cancel">Cancel</button>
+      <button id="save-btn" value="default">Save</button>
+    </menu>
+  </form>
+</dialog>
+
+  </div>
+
 </body>
 </html>

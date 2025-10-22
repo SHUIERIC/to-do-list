@@ -3,21 +3,21 @@ class Project {
 
     constructor (name) {
         this.name = name;
-        this.project = [];
+        this.items = [];
         Project.allProject.push(this)
     }
 
 
     addItem (item) {
-        this.project.push(item)
+        this.items.push(item)
     } 
 
     removeItem (removeItem) {
-        this.project.filter(item => item !== removeItem)
+        this.items.filter(item => item !== removeItem)
     }
 
     getItem () {
-        return this.project
+        return this.items
     }
 }
 
