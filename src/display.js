@@ -1,26 +1,8 @@
-class SideDisplay {
-    constructor (containerContent) {
-        this.container = containerContent
-    }
 
-    sideRenderProject (projects) {
-        this.container.innerHTML = '';
-
-        projects.forEach ( (project) => {
-            const projectContainer = document.createElement("div");
-            projectContainer.classList.add("project")
-
-            projectContainer.innerHTML= `
-            <button> ${project.name}</button>
-            `
-            this.container.appendChild(projectContainer)
-        })
-    }
-}
 
 class MainDisplay {
     constructor(mainContainer) {
-        this.mainContainer = mainContainer // takes .main from html
+        this.mainContainer = mainContainer
         this.projectTitle = document.querySelector(".projectTitle")
     }
 
@@ -29,16 +11,39 @@ class MainDisplay {
 
         this.mainContainer.innerHTML = "";
 
-        project.items.forEach (item => {
-            const card = document.createElement("div");
-            card.classList.add("todo-card");
-            card.innerHTML=`
-            <div>${item.title}</div>
-            <div>${item.dueDate}</div>
-            <div>${item.done}</div>
-            `
-            this.mainContainer.appendChild(card)
+        project.items.forEach((item, index) => {
+        const card = document.createElement("div");
+        card.classList.add("todo-card");
+
+        const titleDiv = document.createElement("div");
+        titleDiv.textContent = item.title;
+
+        const dueDiv = document.createElement("div");
+        dueDiv.textContent = item.dueDate;
+
+        const doneDiv = document.createElement("div");
+        doneDiv.textContent = item.done ? "✅" : "❌";
+
+        const delBtn = document.createElement("button");
+        delBtn.textContent = "Delete";
+        delBtn.addEventListener("click", () => {
+            project.removeItem(item);       
+            this.mainRenderProject(project);
         })
+
+        const detailBtn = document.createElement("button");
+        detailBtn.textContent = "Detail";
+        detailBtn.addEventListener("click", () => {       
+            this.mainRenderItem(project);
+        });
+
+        card.appendChild(titleDiv);
+        card.appendChild(dueDiv);
+        card.appendChild(doneDiv);
+        card.appendChild(delBtn);
+
+        this.mainContainer.appendChild(card);
+    });
     }
 }
 
@@ -48,7 +53,7 @@ class ItemRedner {
     }
 
     // render individual item on the main page
-    mainRenderItem (item) {
+    mainRenderItem (item, project) {
             this.mainContainer.innerHTML = "";
 
             const card = document.createElement("div");
@@ -74,7 +79,6 @@ class ItemRedner {
             done.textContent = `Done: ${item.done ? "✅" : "❌"}`;
             card.appendChild(done);
 
-            if (item.notes) {
                 const notesDiv = document.createElement("div");
                 notesDiv.classList.add("notes");
                 const notesTitle = document.createElement("strong");
@@ -84,28 +88,44 @@ class ItemRedner {
                 notesDiv.appendChild(notesTitle);
                 notesDiv.appendChild(notesAddBtn)
 
+            if (item.notes) {
                 const notesList = document.createElement("ul");
-                item.notes.list.forEach(note => {
+                item.notes.list.forEach((note, index) => {
                     const li = document.createElement("li");
-                    li.innerHTML = `${note} <button>Delete</button>`;
+                    
+                    const label = document.createElement("span");
+                    label.textContent = note;
+
+                    const noteDelBtn = document.createElement("button");
+                    noteDelBtn.textContent = "Delete";
+
+                    noteDelBtn.addEventListener("click", () => {
+                    item.notes.removeNote(index); 
+                    this.mainRenderItem(item);
+                    });
+
+                    li.appendChild(label);
+                    li.appendChild(noteDelBtn);
                     notesList.appendChild(li);
                 });
                 notesDiv.appendChild(notesList);
                 card.appendChild(notesDiv);
             }
 
-            if (item.checklist) {
                 const checklistDiv = document.createElement("div");
                 checklistDiv.classList.add("checklist");
                 const checklistTitle = document.createElement("strong");
                 checklistTitle.textContent = "Checklist:";
                 const checkAddBtn = document.createElement("button")
                 checkAddBtn.textContent= "Add"
+                
                 checklistDiv.appendChild(checklistTitle);
                 checklistDiv.appendChild(checkAddBtn);
+                
 
+            if (item.checklist) {
                 const checklistList = document.createElement("ul");
-                item.checklist.checklists.forEach(task => {
+                item.checklist.checklists.forEach((task, index) => {
                     const li = document.createElement("li");
 
                     const checkbox = document.createElement("input");
@@ -118,9 +138,15 @@ class ItemRedner {
                     const checkDelBtn = document.createElement("button")
                     checkDelBtn.textContent= "Delete"
 
+                    checkDelBtn.addEventListener("click", ()=> {
+                        item.checklist.removeTask(index);
+                        this.mainRenderItem(item);
+                    })
+
+                    
                     li.appendChild(checkbox);
                     li.appendChild(label);
-                    label.appendChild(checkDelBtn)
+                    li.appendChild(checkDelBtn)
                     checklistList.appendChild(li);
                 });
                 checklistDiv.appendChild(checklistList);
@@ -130,10 +156,12 @@ class ItemRedner {
 
         const editBtn = document.createElement("button");
         editBtn.textContent = "Edit";
-        const delBtn = document.createElement("button");
-        delBtn.textContent = "Delete";
+
+        checkAddBtn.addEventListener("click", ()=> this.editChecklist(item.checklist, item))
+        notesAddBtn.addEventListener("click", ()=> this.editNote(item.notes, item))
+        
         editBtn.addEventListener("click", () => this.openEditDialog(item));
-        delBtn.addEventListener("click", () => {item.delete(project); this.mainRenderProject(project)});
+        
         card.appendChild(editBtn); 
         card.appendChild(delBtn)
 
@@ -175,7 +203,78 @@ class ItemRedner {
         cancelBtn.addEventListener("click", () => {
         dialog.close(); 
         });
-        }   
+        }
+    
+    editChecklist (checklist, item) {
+        const checkdialog = document.getElementById("add-checklist");
+
+        checkdialog.showModal()
+
+        const saveCheck = document.getElementById("save-check")
+        saveCheck.onclick = () => {
+            const input = document.querySelector('input[name=checklist]')
+            const newCheck =input.value.trim()
+           
+            item.checklist.addTask(newCheck);
+            this.mainRenderItem(item)
+            input.value =""
+            checkdialog.close()
+        }
     }
+
+    deleteChecklist (checklist, item) {
+        const checkDel = document.querySelector(".checkDel")
+        checkDel.onclick = () => {
+            item.checklist.removeTask (-1)
+        }
+    }
+
+    editNote (note, item) {
+        const noteDialog = document.getElementById("add-note");
+
+        noteDialog.showModal()
+
+        const saveNote = document.getElementById("save-note")
+        saveNote.onclick = () => {
+            const input = document.querySelector('input[name=note]')
+            const newNote =input.value.trim()
+           
+            item.notes.addNote(newNote);
+            this.mainRenderItem(item)
+            input.value =""
+            noteDialog.close()
+        }
+    }
+    }
+
+
+class SideDisplay {
+    constructor (containerContent, maindisplay) {
+        this.container = containerContent
+        this.maindisplay = maindisplay
+    }
+
+    sideRenderProject (projects) {
+        this.container.innerHTML = '';
+
+        projects.forEach ( (project) => {
+            const projectContainer = document.createElement("div");
+            projectContainer.classList.add("project")
+
+            const projectBtn = document.createElement("button")
+            projectBtn.textContent=`${project.name}`
+
+            projectBtn.addEventListener("click", () => {
+                display.mainRenderProject (project)
+            })
+            
+            this.container.appendChild(projectContainer)
+            projectContainer.appendChild(projectBtn)
+        })
+    }
+}
+
+const display = new MainDisplay(document.querySelector(".main"));  
+const sidebar = new SideDisplay(document.querySelector(".sidebar"), display);
 
 export {SideDisplay, MainDisplay, ItemRedner}

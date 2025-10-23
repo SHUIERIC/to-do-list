@@ -13,7 +13,10 @@ class Project {
     } 
 
     removeItem (removeItem) {
-        this.items.filter(item => item !== removeItem)
+        const index = this.items.indexOf(removeItem);
+        if (index !== -1) {
+        this.items.splice(index, 1);
+    }
     }
 
     getItem () {
