@@ -1,53 +1,7 @@
+import { Project } from "./todo-project";
+import { Item } from "./todo-item";
 
-
-class MainDisplay {
-    constructor(mainContainer) {
-        this.mainContainer = mainContainer
-        this.projectTitle = document.querySelector(".projectTitle")
-    }
-
-    mainRenderProject (project) {
-        this.projectTitle.textContent = project.name;
-
-        this.mainContainer.innerHTML = "";
-
-        project.items.forEach((item, index) => {
-        const card = document.createElement("div");
-        card.classList.add("todo-card");
-
-        const titleDiv = document.createElement("div");
-        titleDiv.textContent = item.title;
-
-        const dueDiv = document.createElement("div");
-        dueDiv.textContent = item.dueDate;
-
-        const doneDiv = document.createElement("div");
-        doneDiv.textContent = item.done ? "✅" : "❌";
-
-        const delBtn = document.createElement("button");
-        delBtn.textContent = "Delete";
-        delBtn.addEventListener("click", () => {
-            project.removeItem(item);       
-            this.mainRenderProject(project);
-        })
-
-        const detailBtn = document.createElement("button");
-        detailBtn.textContent = "Detail";
-        detailBtn.addEventListener("click", () => {       
-            this.mainRenderItem(project);
-        });
-
-        card.appendChild(titleDiv);
-        card.appendChild(dueDiv);
-        card.appendChild(doneDiv);
-        card.appendChild(delBtn);
-
-        this.mainContainer.appendChild(card);
-    });
-    }
-}
-
-class ItemRedner {
+class ItemRender {
     constructor(mainContainer) {
         this.mainContainer = mainContainer
     }
@@ -163,7 +117,6 @@ class ItemRedner {
         editBtn.addEventListener("click", () => this.openEditDialog(item));
         
         card.appendChild(editBtn); 
-        card.appendChild(delBtn)
 
         this.mainContainer.appendChild(card);
 
@@ -247,6 +200,92 @@ class ItemRedner {
     }
     }
 
+class MainDisplay {
+    constructor(mainContainer, itemRender) {
+        this.mainContainer = mainContainer
+        this.projectTitle = document.querySelector(".projectTitle")
+        this.delBtn = document.querySelector(".delBtn")
+        this.itemRender = itemRender
+    }
+
+    mainRenderProject (project) {
+        this.projectTitle.textContent = project.name
+        
+        this.mainContainer.innerHTML = "";
+
+        project.items.forEach((item, index) => {
+        const card = document.createElement("div");
+        card.classList.add("todo-card");
+
+        const titleDiv = document.createElement("div");
+        titleDiv.textContent = item.title;
+
+        const dueDiv = document.createElement("div");
+        dueDiv.textContent = item.dueDate;
+
+        const doneDiv = document.createElement("div");
+        doneDiv.textContent = item.done ? "✅" : "❌";
+
+        const detailBtn = document.createElement("button");
+        detailBtn.textContent = "Detail";
+        detailBtn.addEventListener("click", () => {       
+            this.itemRender.mainRenderItem(item, project);
+        });
+
+        const delBtn = document.createElement("button");
+        delBtn.textContent = "Delete";
+        delBtn.addEventListener("click", () => {
+            project.removeItem(item);       
+            this.mainRenderProject(project);
+        })
+
+        card.appendChild(titleDiv);
+        card.appendChild(dueDiv);
+        card.appendChild(doneDiv);
+        card.appendChild(detailBtn)
+        card.appendChild(delBtn);
+        
+        this.mainContainer.appendChild(card);
+        });
+
+        const addItemBtn = document.createElement("button");
+        addItemBtn.textContent = "Add Todo Item";
+        addItemBtn.addEventListener("click", () => this.addItemDialog(project))
+        this.mainContainer.appendChild(addItemBtn)
+    }
+
+    addItemDialog (project) {
+        const itemialog = document.getElementById("add-item");
+
+        
+
+        itemialog.showModal()
+
+        const saveItem = document.getElementById("save-item")
+
+        saveItem.onclick = () => {
+            const newItem = {
+                title: itemialog.querySelector('input[name="title"]').value,
+                description: itemialog.querySelector('textarea[name="description"]').value,
+                dueDate: itemialog.querySelector('input[name="dueDate"]').value,
+                priority: itemialog.querySelector('select[name="priority"]').value,
+                done: itemialog.querySelector('input[name="done"]').checked
+            }
+           
+            const newTodo = new Item (newItem.title, newItem.description, newItem.dueDate, newItem.priority);
+            project.addItem(newTodo)
+
+            itemialog.querySelector('input[name="title"]').value = "";
+            itemialog.querySelector('textarea[name="description"]').value = "";
+            itemialog.querySelector('select[name="priority"]').value = "Medium";
+            itemialog.querySelector('input[name="done"]').checked = false;
+
+            itemialog.close()
+
+            this.mainRenderProject(project)
+        }
+        }
+}
 
 class SideDisplay {
     constructor (containerContent, maindisplay) {
@@ -265,16 +304,46 @@ class SideDisplay {
             projectBtn.textContent=`${project.name}`
 
             projectBtn.addEventListener("click", () => {
-                display.mainRenderProject (project)
+                this.maindisplay.mainRenderProject (project)
             })
-            
+
+            const delProBtn = document.createElement("button");
+            delProBtn.textContent = "Delete Project";
+            delProBtn.addEventListener("click", () => {
+            project.deleteProject(project);  
+            this.sideRenderProject(Project.allProject);
+            })
+                
             this.container.appendChild(projectContainer)
             projectContainer.appendChild(projectBtn)
+            projectContainer.appendChild(delProBtn)
         })
+
+        const addProBtn = document.createElement("button");
+        addProBtn.textContent = "Add Project";
+        addProBtn.addEventListener("click", () => this.addProDialog())
+        this.container.appendChild(addProBtn)
+
     }
+
+     addProDialog () {
+        const proDialog = document.getElementById("add-project");
+
+        proDialog.showModal()
+
+        const savePro = document.getElementById("save-project")
+        savePro.onclick = () => {
+            const input = document.querySelector('input[name=project]')
+            const proName =input.value.trim()
+            if (proName === "") return;
+           
+            const newProject = new Project(proName);
+            this.sideRenderProject(Project.allProject);
+            input.value =""
+            proDialog.close()
+        }
+        }
 }
 
-const display = new MainDisplay(document.querySelector(".main"));  
-const sidebar = new SideDisplay(document.querySelector(".sidebar"), display);
 
-export {SideDisplay, MainDisplay, ItemRedner}
+export {SideDisplay, MainDisplay, ItemRender}

@@ -1,17 +1,11 @@
 import { Item } from "./todo-item";
 import { Project } from "./todo-project";
-import { MainDisplay, SideDisplay, ItemRedner } from "./display";
+import { MainDisplay, SideDisplay, ItemRender } from "./display";
 import './styles.css';
 
 const sideContent = document.querySelector(".sideContent")
 const main = document.querySelector(".main")
 const item = document.querySelector(".itemContainer")
-const sideDisplay = new SideDisplay (sideContent)
-const mainDisplay = new MainDisplay (main)
-const mainItemDisplay = new ItemRedner (item)
-
-const display = new MainDisplay(document.querySelector(".main"));
-const sidebar = new SideDisplay(document.querySelector(".sidebar"));
 
 const todo1 = new Item('Finish report', 'Complete report by Friday', '2025-10-28', 'High');
 const todo2 = new Item('Email client', 'Send update email', '2025-10-26', 'Medium');
@@ -46,6 +40,11 @@ console.log (project2.getItem())
 console.log (defaultProject.getItem())
 console.log (Project.allProject)
 
+
+
+const itemRender = new ItemRender(document.querySelector(".main"));
+const mainDisplay = new MainDisplay(document.querySelector(".main"), itemRender);
+const sideDisplay = new SideDisplay(document.querySelector(".sideContent"), mainDisplay);
 
 sideDisplay.sideRenderProject(Project.allProject)
 mainDisplay.mainRenderProject(defaultProject)

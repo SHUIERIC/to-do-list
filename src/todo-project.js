@@ -22,6 +22,16 @@ class Project {
     getItem () {
         return this.items
     }
+
+    deleteProject (delProject) {
+         const index = Project.allProject.indexOf(delProject);
+        if (index !== -1) {
+        Project.allProject.splice(index, 1);
+    }}
+
+    addProject (name) {
+        const project = new Project(name)
+    }
 }
 
 export {Project}
