@@ -1,5 +1,7 @@
 import { Project } from "./todo-project";
 import { Item } from "./todo-item";
+import { saveProjects, loadProjects } from "./storage";
+
 
 class ItemRender {
     constructor(mainContainer) {
@@ -55,6 +57,7 @@ class ItemRender {
 
                     noteDelBtn.addEventListener("click", () => {
                     item.notes.removeNote(index); 
+                    saveProjects()
                     this.mainRenderItem(item);
                     });
 
@@ -94,6 +97,7 @@ class ItemRender {
 
                     checkDelBtn.addEventListener("click", ()=> {
                         item.checklist.removeTask(index);
+                        saveProjects()
                         this.mainRenderItem(item);
                     })
 
@@ -169,6 +173,7 @@ class ItemRender {
             const newCheck =input.value.trim()
            
             item.checklist.addTask(newCheck);
+            saveProjects()
             this.mainRenderItem(item)
             input.value =""
             checkdialog.close()
@@ -193,6 +198,7 @@ class ItemRender {
             const newNote =input.value.trim()
            
             item.notes.addNote(newNote);
+            saveProjects()
             this.mainRenderItem(item)
             input.value =""
             noteDialog.close()
@@ -235,7 +241,8 @@ class MainDisplay {
         const delBtn = document.createElement("button");
         delBtn.textContent = "Delete";
         delBtn.addEventListener("click", () => {
-            project.removeItem(item);       
+            project.removeItem(item);
+            saveProjects()       
             this.mainRenderProject(project);
         })
 
@@ -257,8 +264,6 @@ class MainDisplay {
     addItemDialog (project) {
         const itemialog = document.getElementById("add-item");
 
-        
-
         itemialog.showModal()
 
         const saveItem = document.getElementById("save-item")
@@ -274,6 +279,7 @@ class MainDisplay {
            
             const newTodo = new Item (newItem.title, newItem.description, newItem.dueDate, newItem.priority);
             project.addItem(newTodo)
+            saveProjects()
 
             itemialog.querySelector('input[name="title"]').value = "";
             itemialog.querySelector('textarea[name="description"]').value = "";
@@ -310,7 +316,8 @@ class SideDisplay {
             const delProBtn = document.createElement("button");
             delProBtn.textContent = "Delete Project";
             delProBtn.addEventListener("click", () => {
-            project.deleteProject(project);  
+            project.deleteProject(project); 
+            saveProjects() 
             this.sideRenderProject(Project.allProject);
             })
                 
@@ -338,6 +345,7 @@ class SideDisplay {
             if (proName === "") return;
            
             const newProject = new Project(proName);
+            saveProjects()
             this.sideRenderProject(Project.allProject);
             input.value =""
             proDialog.close()

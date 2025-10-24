@@ -99,7 +99,7 @@ class Checklist {
 }
 
 
-export {Item}
+export {Item, Note, Checklist}
 
 
   

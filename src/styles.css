@@ -1,7 +1,7 @@
 body {
     height: 98vh;
     display: grid;
-    grid-template-columns: minmax(100px, 1fr) minmax(500px, 5fr);
+    grid-template-columns: minmax(100px, 1fr) minmax(500px, 4fr);
 }
 
 .mainpage {
@@ -20,4 +20,21 @@ body {
 
 .todo-card {
     border: 2px solid red;
+}
+
+.sideContent {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+    flex: 1
+}
+
+.project {
+  display: flex;
+  flex-direction: column; 
+  gap: 0.5rem
+}
+
+.project button {
+  width: 100%; 
 }

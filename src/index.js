@@ -1,12 +1,12 @@
 import { Item } from "./todo-item";
 import { Project } from "./todo-project";
 import { MainDisplay, SideDisplay, ItemRender } from "./display";
+import { saveProjects, loadProjects } from "./storage";
 import './styles.css';
 
-const sideContent = document.querySelector(".sideContent")
-const main = document.querySelector(".main")
-const item = document.querySelector(".itemContainer")
+loadProjects()
 
+if (Project.allProject.length === 0) {
 const todo1 = new Item('Finish report', 'Complete report by Friday', '2025-10-28', 'High');
 const todo2 = new Item('Email client', 'Send update email', '2025-10-26', 'Medium');
 const todo3 = new Item("Buy groceries","Pick up milk, eggs, and vegetables from the supermarket.","2025-10-24","Medium");
@@ -19,7 +19,6 @@ const todo8 = new Item("Read 'Clean Code'", "Read and summarize chapters 5-8 of 
 const defaultProject = new Project ('To do List')
 const project1 = new Project ("Work")
 const project2 = new Project("Home")
-
 
 
 project2.addItem(todo1)
@@ -40,11 +39,13 @@ console.log (project2.getItem())
 console.log (defaultProject.getItem())
 console.log (Project.allProject)
 
-
+saveProjects()
+}
 
 const itemRender = new ItemRender(document.querySelector(".main"));
 const mainDisplay = new MainDisplay(document.querySelector(".main"), itemRender);
 const sideDisplay = new SideDisplay(document.querySelector(".sideContent"), mainDisplay);
 
+loadProjects()
 sideDisplay.sideRenderProject(Project.allProject)
-mainDisplay.mainRenderProject(defaultProject)
+mainDisplay.mainRenderProject(Project.allProject[0])
